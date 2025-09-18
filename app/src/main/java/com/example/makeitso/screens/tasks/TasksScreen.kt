@@ -25,17 +25,17 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.makeitso.R.drawable as AppIcon
 import com.example.makeitso.R.string as AppText
 import com.example.makeitso.common.composable.ActionToolbar
 import com.example.makeitso.common.ext.smallSpacer
 import com.example.makeitso.common.ext.toolbarActions
 import com.example.makeitso.model.Task
-import com.example.makeitso.theme.MakeItSoTheme
+
 
 @Composable
 @ExperimentalMaterialApi
@@ -53,7 +53,8 @@ fun TasksScreen(
     onSettingsClick = viewModel::onSettingsClick,
     onTaskCheckChange = viewModel::onTaskCheckChange,
     onTaskActionClick = viewModel::onTaskActionClick,
-    openScreen = openScreen
+    openScreen = openScreen,
+    options = options,
   )
 
   LaunchedEffect(viewModel) { viewModel.loadTaskOptions() }
@@ -64,7 +65,8 @@ fun TasksScreen(
 @ExperimentalMaterialApi
 fun TasksScreenContent(
   modifier: Modifier = Modifier,
-  tasks: List<Task>, // <-- add this parameter
+  tasks: List<Task>,
+  options: List<String>, // <-- pass it here
   onAddClick: ((String) -> Unit) -> Unit,
   onSettingsClick: ((String) -> Unit) -> Unit,
   onTaskCheckChange: (Task) -> Unit,
@@ -94,10 +96,10 @@ fun TasksScreenContent(
       Spacer(modifier = Modifier.smallSpacer())
 
       LazyColumn {
-        items(tasks, key = { it.id }) { taskItem -> // now taskItem is valid
+        items(tasks, key = { it.id }) { taskItem ->
           TaskItem(
+            options = options,
             task = taskItem,
-            options = listOf(),
             onCheckChange = { onTaskCheckChange(taskItem) },
             onActionClick = { action -> onTaskActionClick(openScreen, taskItem, action) }
           )
@@ -106,5 +108,4 @@ fun TasksScreenContent(
     }
   }
 }
-
 
